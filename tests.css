@@ -1,0 +1,11 @@
+table.main td{
+    vertical-align: top;
+    padding: 3px 10px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+
+table.main td:first-child{
+    border-left: 1px solid #ccc;
+}
