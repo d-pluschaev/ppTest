@@ -26,11 +26,26 @@ require_once 'xhp_test/printers/XHPPrinterPrintTestAsHTMLCell.php';
 
 <?
 
+    $testCases = glob(__DIR__.'/tests/*.php');
 
-$testCase = new XHPTestCase('tests/Tasks1.php', new XHPPrinterPrintTestAsHTMLCell());
-$testCase->execute();
+    foreach($testCases as $testCaseFile){
 
-?>
+        $testCase = new XHPTestCase($testCaseFile, new XHPPrinterPrintTestAsHTMLCell());
+
+        if (!$testCase->markedAsSkipped()) {
+
+            echo '<tr/><tr class="title"><td colspan="'.sizeof($testCase->methods).'">'
+                . $testCase->getClassDescription().'</td></tr><tr>';
+
+            $testCase->execute();
+
+        }
+        ?>
+
+        </tr>
+
+    <?}?>
+
 </tr></table>
 
 </body>

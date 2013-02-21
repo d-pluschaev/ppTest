@@ -10,5 +10,7 @@ abstract class XHPTestResultPrinter
 
     abstract public function testCode($code);
 
-    abstract public function testResults(array $data);
+    abstract public function testResults(array $data, $handler);
+
+    abstract public function matchResults($matchFlag);
 }

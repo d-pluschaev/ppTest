@@ -1,3 +1,10 @@
+table.main{
+    width:100%;
+}
+table.main tr.title{
+    padding: 1px 10px;
+    background-color: #ccc;
+}
 table.main td{
     vertical-align: top;
     padding: 3px 10px;
@@ -5,7 +12,10 @@ table.main td{
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
 }
-
 table.main td:first-child{
-    border-left: 1px solid #ccc;
+    border-left: 1px solid #999;
+}
+
+.meta{
+    color: #ccc;
 }
