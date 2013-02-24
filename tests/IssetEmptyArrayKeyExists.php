@@ -4,12 +4,10 @@
  * @description <b>isset</b>, <b>empty</b>, <b>array_key_exists</b>
  * @skip true
  */
-class XHPTestCaseIssetEmptyArrayKeyExists
+class XHPTestCaseIssetEmptyArrayKeyExists extends XHPTestClass
 {
     /**
      * @description <b>isset</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testIssetEmptyAndEqual1()
@@ -20,8 +18,6 @@ class XHPTestCaseIssetEmptyArrayKeyExists
 
     /**
      * @description <b>!empty</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testIssetEmptyAndEqual2()
@@ -32,8 +28,6 @@ class XHPTestCaseIssetEmptyArrayKeyExists
 
     /**
      * @description <b>array_key_exists</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testIssetEmptyAndEqual3()

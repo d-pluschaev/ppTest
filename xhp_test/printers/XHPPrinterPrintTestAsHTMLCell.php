@@ -15,9 +15,9 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
     public function testTitle(array $data)
     {
         echo
-            '<div class="title"><span class="meta">Test #' . ($data['index']) . ':</span> '
+            '<div class="title"><span class="meta">Test #' . ($data['index']+1) . ':</span> '
             . $data['description']
-            . " <sup class=\"meta\">({$data['external_tests_quantity']} x {$data['internal_tests_quantity']})</sup>"
+            //. " <sup class=\"meta\">({$data['external_tests_quantity']} x {$data['internal_tests_quantity']})</sup>"
             . '</div>';
     }
 
@@ -44,7 +44,9 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 
         echo
             (!empty($res) ? "Result: <pre>" . $this->highlight($res) . '</pre><br/>' : '')
-            . "Average Microseconds: <b>{$data['wt']}</b><br/>";
+            . "Average microseconds per call (xhprof): <b>".round($data['wt'],2)."</b><br/>"
+            . "Average microseconds per test (php): <b>".round($data['timer'] * 1000 * 1000)."</b><br/>"
+            ;
         //. "Average CPU: <b>{$data['cpu']}</b><br/>"
         //. "Average Mem. usage: <b>{$data['mu']}</b><br/>";
         //. "Average Memory. usage (peak): <b>{$data['apmu']}</b><br/>";

@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @description Массивы: <b>count</b> против <b>sizeof</b>.
+ * @description Утверждение: <b>count</b> медленнее <b>sizeof</b> при подсчёте размера массива.<br/>
+ * Результат теста: они идентичны по времени выполнения
  * @skip true
  */
-class XHPTestCaseCountVsSizeof
+class XHPTestCaseCountVsSizeof extends XHPTestClass
 {
     private $array;
 
@@ -16,8 +17,6 @@ class XHPTestCaseCountVsSizeof
 
     /**
      * @description <b>count</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testCount()
@@ -29,9 +28,7 @@ class XHPTestCaseCountVsSizeof
     }
 
     /**
-     * @description <b>count</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
+     * @description <b>sizeof</b>
      * @result_handler var_dump
      */
     public function testSizeof()

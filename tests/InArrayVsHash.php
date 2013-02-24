@@ -6,12 +6,10 @@
  * Найти количество совпадений в двух массивах.
  * @skip true
  */
-class XHPTestCaseInArrayVsHash
+class XHPTestCaseInArrayVsHash extends XHPTestClass
 {
     /**
      * @description Самый очевидный: <b>array_intersect</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testArrayIntersect()
@@ -31,8 +29,6 @@ class XHPTestCaseInArrayVsHash
 
     /**
      * @description Тоже очевидный: <b>in_array</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testInArray()
@@ -55,8 +51,6 @@ class XHPTestCaseInArrayVsHash
 
     /**
      * @description Гуру стайл: <b>просто хэш</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      * @result_handler var_dump
      */
     public function testHashUsingArrayFlip()
@@ -80,9 +74,6 @@ class XHPTestCaseInArrayVsHash
 
     /**
      * @description Почему <b>array_flip</b>? <b>Foreach</b> же!
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
-     * @result_handler var_dump
      */
     public function testForeach()
     {
@@ -99,9 +90,6 @@ class XHPTestCaseInArrayVsHash
 
     /**
      * @description Потому что <b>array_flip</b> круче
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
-     * @result_handler var_dump
      */
     public function testArrayFlip()
     {

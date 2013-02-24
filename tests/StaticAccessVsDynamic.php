@@ -4,7 +4,7 @@
  * @description <b>static</b> and <b>dynamic</b> access to class methods and properties
  * @skip true
  */
-class XHPTestCaseStaticAccessVsDynamic
+class XHPTestCaseStaticAccessVsDynamic extends XHPTestClass
 {
     private $object;
 
@@ -15,8 +15,6 @@ class XHPTestCaseStaticAccessVsDynamic
 
     /**
      * @description Access to <b>static</b> property
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testAccessToStaticProperty()
     {
@@ -25,8 +23,6 @@ class XHPTestCaseStaticAccessVsDynamic
 
     /**
      * @description Access to <b>dynamic</b> property
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testAccessToDynamicProperty()
     {
@@ -35,8 +31,6 @@ class XHPTestCaseStaticAccessVsDynamic
 
     /**
      * @description Access to <b>static</b> method
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testAccessToStaticMethod()
     {
@@ -45,8 +39,6 @@ class XHPTestCaseStaticAccessVsDynamic
 
     /**
      * @description Access to <b>dynamic</b> method
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testAccessToDynamicMethod()
     {

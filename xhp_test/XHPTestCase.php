@@ -1,6 +1,7 @@
 <?php
 
 require_once 'XHPTestResultPrinter.php';
+require_once 'XHPTestClass.php';
 
 class XHPTestCase
 {
@@ -9,13 +10,17 @@ class XHPTestCase
     public function __construct($testFile, XHPTestResultPrinter $printer)
     {
         if (is_file($testFile)) {
-            $this->source = file($testFile);
-            require_once($testFile);
-            $this->testClass = 'XHPTestCase' . ucfirst(pathinfo($testFile, PATHINFO_FILENAME));
-            $this->testObject = new $this->testClass;
-            $this->testClassRC = new ReflectionClass($this->testClass);
-            $this->methods = $this->getTestMethods();
-            $this->printer = $printer;
+            if (function_exists('xhprof_enable')) {
+                $this->source = file($testFile);
+                require_once($testFile);
+                $this->testClass = 'XHPTestCase' . ucfirst(pathinfo($testFile, PATHINFO_FILENAME));
+                $this->testObject = new $this->testClass;
+                $this->testClassRC = new ReflectionClass($this->testClass);
+                $this->methods = $this->getTestMethods();
+                $this->printer = $printer;
+            } else {
+                throw new Exception('PHP XHProf extension required');
+            }
         } else {
             throw new Exception('Test file not found: ' . $testFile);
         }
@@ -44,10 +49,10 @@ class XHPTestCase
             $annotations = $this->getMethodAnnotations($test);
             $internal_tests_quantity = isset($annotations['internal_tests_quantity'])
                 ? $annotations['internal_tests_quantity']
-                : 1;
+                : 100;
             $external_tests_quantity = isset($annotations['external_tests_quantity'])
                 ? $annotations['external_tests_quantity']
-                : 1;
+                : 100;
 
             // title
             $this->printer->testTitle(
@@ -89,8 +94,14 @@ class XHPTestCase
             'cpu' => array(),
             'mu' => array(),
             'pmu' => array(),
+            'timer' => array(),
         );
+
+        $this->testObject->setUp();
+
         for ($j = 0; $j < $etq; $j++) {
+            $timer = microtime(1);
+
             xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
 
             for ($i = 0; $i < $itq; $i++) {
@@ -105,6 +116,7 @@ class XHPTestCase
             $metrics['cpu'][] = $xdata['cpu'] / $itq;
             $metrics['mu'][] = $xdata['mu'] / $itq;
             $metrics['pmu'][] = $xdata['pmu'] / $itq;
+            $metrics['timer'][] = microtime(1) - $timer;
 
             usleep(10);
         }
@@ -118,13 +130,15 @@ class XHPTestCase
                 // remove bottom 20%
                 $metric = array_slice($metric, round($etq / 20));
                 // calc averages
-                $metric = round(array_sum($metric) / sizeof($metric), 2);
+                $metric = array_sum($metric) / sizeof($metric);
             } else {
-                $metric = round(array_sum($metric) / sizeof($metric), 2);
+                $metric = array_sum($metric) / sizeof($metric);
             }
         }
 
         $metrics['result'] = $result;
+
+        $this->testObject->tearDown();
 
         return $metrics;
     }

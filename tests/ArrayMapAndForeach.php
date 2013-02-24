@@ -4,12 +4,10 @@
  * @description <b>array_map</b> vs <b>foreach</b>
  * @skip true
  */
-class XHPTestCaseArrayMapAndForeach
+class XHPTestCaseArrayMapAndForeach extends XHPTestClass
 {
     /**
      * @description <b>array_map</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testArrayMapVsForeach1()
     {
@@ -21,8 +19,6 @@ class XHPTestCaseArrayMapAndForeach
 
     /**
      * @description <b>foreach</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testArrayMapVsForeach2()
     {
@@ -35,8 +31,6 @@ class XHPTestCaseArrayMapAndForeach
 
     /**
      * @description Сравнение <b>foreach v.2</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testArrayMapVsForeach3()
     {
@@ -49,8 +43,6 @@ class XHPTestCaseArrayMapAndForeach
 
     /**
      * @description Сравнение <b>for</b>
-     * @external_tests_quantity 100
-     * @internal_tests_quantity 100
      */
     public function testArrayMapVsForeach4()
     {
