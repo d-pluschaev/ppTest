@@ -12,5 +12,7 @@ abstract class XHPTestResultPrinter
 
     abstract public function testResults(array $data, $handler);
 
+    abstract public function testMetrics(array $data);
+
     abstract public function matchResults($matchFlag);
 }

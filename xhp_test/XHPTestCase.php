@@ -7,6 +7,8 @@ class XHPTestCase
 {
     protected $results;
 
+    public $data;
+
     public function __construct($testFile, XHPTestResultPrinter $printer)
     {
         if (is_file($testFile)) {
@@ -42,6 +44,8 @@ class XHPTestCase
 
     public function execute()
     {
+        $this->printer->startCase($this);
+
         foreach ($this->methods as $index => $test) {
             $this->printer->startTest();
 
@@ -55,14 +59,13 @@ class XHPTestCase
                 : 100;
 
             // title
-            $this->printer->testTitle(
-                array(
-                    'index' => $index,
-                    'description' => isset($annotations['description']) ? $annotations['description'] : $test,
-                    'internal_tests_quantity' => $internal_tests_quantity,
-                    'external_tests_quantity' => $external_tests_quantity,
-                )
+            $primaryData=array(
+                'index' => $index,
+                'description' => isset($annotations['description']) ? $annotations['description'] : $test,
+                'internal_tests_quantity' => $internal_tests_quantity,
+                'external_tests_quantity' => $external_tests_quantity,
             );
+            $this->printer->testTitle($primaryData);
 
             // code
             $func = $this->testClassRC->getMethod($test);
@@ -73,6 +76,8 @@ class XHPTestCase
             $this->printer->testCode($code);
 
             $data = $this->doTest($external_tests_quantity, $internal_tests_quantity, $test);
+            $data = array_merge($primaryData, $data);
+
             $this->printer->testResults(
                 $data,
                 isset($annotations['result_handler'])
@@ -82,9 +87,13 @@ class XHPTestCase
             $this->results[$index] = serialize($data['result']);
 
             $this->printer->matchResults($index ? ($data['result'] == $this->results[0] ? 1 : -1) : 0);
-
+            $this->printer->testMetrics($data);
             $this->printer->endTest();
+
+            $this->data[] = $data;
         }
+
+        $this->printer->endCase($this);
     }
 
     protected function doTest($etq, $itq, $task)

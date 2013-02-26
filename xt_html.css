@@ -19,3 +19,13 @@ table.main td:first-child{
 .meta{
     color: #ccc;
 }
+
+.result{
+    border: 1px solid #ddd;
+    padding: 4px;
+    background-color: #EAEAEA;
+}
+
+.result sup{
+    font-weight: bold;
+}

@@ -4,7 +4,7 @@
  * @description <b>foreach</b> vs <b>for</b>. Что быстрее?<br/>
  * На примере создания хэша из массива-таблицы: array(0=>array('id'=>1, 'name'=>'test' .... ) размером 1000x20.<br/>
  * Ключом для хэша будет служить столбец "col10";
- * @skipa true
+ * @skip true
  */
 class XHPTestCaseForeachVsFor extends XHPTestClass
 {

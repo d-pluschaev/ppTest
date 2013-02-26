@@ -2,6 +2,17 @@
 
 class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 {
+    public function startCase(XHPTestCase $testCase)
+    {
+        echo '<tr/><tr class="title"><td colspan="'.sizeof($testCase->methods).'">'
+            . $testCase->getClassDescription().'</td></tr><tr>';
+    }
+
+    public function endCase(XHPTestCase $testCase)
+    {
+
+    }
+
     public function startTest()
     {
         echo '<td>';
@@ -42,11 +53,20 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
                 break;
         }
 
-        echo
-            (!empty($res) ? "Result: <pre>" . $this->highlight($res) . '</pre><br/>' : '')
-            . "Average microseconds per call (xhprof): <b>".round($data['wt'],2)."</b><br/>"
-            . "Average microseconds per test (php): <b>".round($data['timer'] * 1000 * 1000)."</b><br/>"
-            ;
+        echo '<div class="result">'.(!empty($res) ? "Result: <pre>" . $this->highlight($res) . '</pre><br/>' : '');
+    }
+
+    public function testMetrics(array $data)
+    {
+        $metrics = array(
+            'title'=>$data['description'],
+            'wt' => round($data['wt'],2),
+            'timer' => round($data['timer'] * 1000 * 1000),
+       );
+
+        echo "Average microseconds per call (xhprof): <b>{$metrics['wt']}</b><br/>"
+            . "Average microseconds per test (php): <b>{$metrics['timer']}</b><br/>"
+        ;
         //. "Average CPU: <b>{$data['cpu']}</b><br/>"
         //. "Average Mem. usage: <b>{$data['mu']}</b><br/>";
         //. "Average Memory. usage (peak): <b>{$data['apmu']}</b><br/>";
@@ -54,7 +74,22 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 
     public function matchResults($matchFlag)
     {
-        echo '<div></div>';
+        switch ($matchFlag){
+            case 1:
+                $label = "result is the same as previous";
+                $color='green';
+                break;
+            case 0:
+                $label = "first result";
+                $color='#777';
+                break;
+            default:
+                $label = "doesn't match";
+                $color='red';
+                break;
+        }
+
+        echo "<div><sup style=\"color:{$color}\">{$label}</sup></div></div>";
     }
 
     public function highlight($txt)
