@@ -10,7 +10,7 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 
     public function endCase(XHPTestCase $testCase)
     {
-
+        $this->report($testCase->data);
     }
 
     public function startTest()
@@ -92,10 +92,61 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
         echo "<div><sup style=\"color:{$color}\">{$label}</sup></div></div>";
     }
 
-    public function highlight($txt)
+    protected function highlight($txt)
     {
         $result = highlight_string("<?$txt", true);
         return substr_replace($result, '', strpos($result, '&lt;?'), 5);
+    }
+
+    protected function report(array $data)
+    {
+        if(!empty($data)){
+            usort($data, function($a,$b){return $a['wt']>$b['wt'];});
+
+            $minWt=$minTimer=PHP_INT_MAX;
+            foreach($data as $row){
+                $minWt = $minWt < $row['wt'] ? $minWt : $row['wt'];
+                $minTimer = $minTimer < $row['timer'] ? $minTimer : $row['timer'];
+            }
+
+            $table = array();
+
+            foreach($data as $row){
+                $wt=round($row['wt'],2);
+                $timer=round($row['timer'] * 1000 * 1000,2);
+
+                $greaterThanMinWt = round(100-(($minWt/$row['wt'])*100),2);
+                $greaterThanMinTimer = round(100-(($minTimer/$row['timer'])*100),2);
+
+                $table[]=array(
+                    'XHP Time'=>$wt,
+                    'XHP Time %'=>$greaterThanMinWt,
+                    'PHP Time'=>$timer,
+                    'PHP Time %'=>$greaterThanMinTimer,
+                    'Title'=>$row['description'],
+                );
+            }
+
+            echo '<tr><td colspan="42"><div>Report:</div>';
+            echo '<table class="report"><thead>';
+            foreach ($table[0] as $column=>$value){
+                echo "<th>$column</th>";
+            }
+            echo '<thead><tbody>';
+
+
+            foreach ($table as $row){
+                echo '<tr>';
+                foreach($row as $value){
+                    echo "<td>$value</td>";
+                }
+                echo '</tr>';
+            }
+            //print_r($table);
+
+
+            echo '</tbody></table></td></tr>';
+        }
     }
 
 }

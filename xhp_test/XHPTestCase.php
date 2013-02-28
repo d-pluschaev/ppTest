@@ -86,7 +86,7 @@ class XHPTestCase
             );
             $this->results[$index] = serialize($data['result']);
 
-            $this->printer->matchResults($index ? ($data['result'] == $this->results[0] ? 1 : -1) : 0);
+            $this->printer->matchResults($index ? ($this->results[$index] == $this->results[0] ? 1 : -1) : 0);
             $this->printer->testMetrics($data);
             $this->printer->endTest();
 
