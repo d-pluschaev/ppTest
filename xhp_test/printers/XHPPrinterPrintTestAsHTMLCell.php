@@ -104,12 +104,25 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
             usort($data, function($a,$b){return $a['wt']>$b['wt'];});
 
             $minWt=$minTimer=PHP_INT_MAX;
+            $maxWt=$maxTimer=-PHP_INT_MAX;
             foreach($data as $row){
                 $minWt = $minWt < $row['wt'] ? $minWt : $row['wt'];
                 $minTimer = $minTimer < $row['timer'] ? $minTimer : $row['timer'];
+                $maxWt = $maxWt > $row['wt'] ? $maxWt : $row['wt'];
+                $maxTimer = $maxTimer > $row['timer'] ? $maxTimer : $row['timer'];
             }
 
             $table = array();
+
+            // graph zoom
+            $offsetWt=($maxWt-$minWt)/$maxWt;
+            $offsetTimer=($maxTimer-$minTimer)/$maxTimer;
+            $maxOffset=$offsetWt> $offsetTimer ? $offsetWt : $offsetTimer;
+            $maxGraphWidth=200;
+            $zoomFactor=1;
+            if($maxOffset > $maxGraphWidth){
+                $zoomFactor=$maxGraphWidth/$maxOffset;
+            }
 
             foreach($data as $row){
                 $wt=round($row['wt'],2);
@@ -118,7 +131,16 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
                 $greaterThanMinWt = round(100-(($minWt/$row['wt'])*100),2);
                 $greaterThanMinTimer = round(100-(($minTimer/$row['timer'])*100),2);
 
+                $graph='<div class="cmp_graph" style="width:'.$maxGraphWidth.'px">';
+
+                $graph.='<div class="wrap"><div class="wt" style="width:'
+                    .round($greaterThanMinWt * $maxGraphWidth/100 * $zoomFactor).'px"></div></div>';
+                $graph.='<div class="wrap"><div class="timer" style="width:'
+                    .round($greaterThanMinTimer * $maxGraphWidth/100 * $zoomFactor).'px"></div></div>';
+                $graph.='</div>';
+
                 $table[]=array(
+                    'Graph'=>$graph,
                     'XHP Time'=>$wt,
                     'XHP Time %'=>$greaterThanMinWt,
                     'PHP Time'=>$timer,

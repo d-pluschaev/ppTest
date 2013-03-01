@@ -3,7 +3,7 @@
 /**
  * @description Вопрос: Чем чревато использование промежуточных переменных для удобочитаемости кода?<br/>
  * Ответ: ничем
- * @skipa true
+ * @skip true
  */
 class XHPTestCaseTemporaryVars extends XHPTestClass
 {

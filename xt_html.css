@@ -29,3 +29,24 @@ table.main td:first-child{
 .result sup{
     font-weight: bold;
 }
+.cmp_graph{
+}
+.cmp_graph .wrap{
+    border:1px solid #ccc;
+    margin-top:1px;
+    background-color: #EEE;
+}
+.cmp_graph .wt{
+    height:8px;
+    background-color: #FF9900;
+}
+.cmp_graph .timer{
+    height:8px;
+    background-color: #CC3300;
+}
+table.report{
+    width:100%;
+}
+table.report thead th:first-child{
+    width:200px;
+}
