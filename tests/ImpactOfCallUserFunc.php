@@ -6,7 +6,7 @@
  *
  * @skip true
  */
-class XHPTestCaseImpactOfCallUserFunc extends XHPTestClass
+class PPTestCaseImpactOfCallUserFunc extends PPTestClass
 {
     /**
      * @description <b>call_user_func_array</b> для функции

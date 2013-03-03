@@ -4,7 +4,7 @@
  * @description <b>array_map</b>, <b>array_walk</b> vs <b>foreach</b> на примере: возвести в квадрат все элементы массива
  * @skip true
  */
-class XHPTestCaseArrayMapAndForeach extends XHPTestClass
+class PPTestCaseArrayMapAndForeach extends PPTestClass
 {
     /**
      * @description <b>array_map</b> вместе с Closure

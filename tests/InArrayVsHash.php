@@ -6,7 +6,7 @@
  * Найти количество совпадений в двух массивах.
  * @skip true
  */
-class XHPTestCaseInArrayVsHash extends XHPTestClass
+class PPTestCaseInArrayVsHash extends PPTestClass
 {
     public $array;
 

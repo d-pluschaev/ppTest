@@ -2,9 +2,9 @@
 
 /**
  * @description <b>isset</b>, <b>empty</b>, <b>array_key_exists</b> Без комментариев
- * @skip true
+ * @skipa true
  */
-class XHPTestCaseIssetEmptyArrayKeyExists extends XHPTestClass
+class PPTestCaseIssetEmptyArrayKeyExists extends PPTestClass
 {
     /**
      * @description <b>isset</b>

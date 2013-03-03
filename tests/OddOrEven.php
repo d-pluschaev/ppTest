@@ -6,7 +6,7 @@
  * Вывод: в PHP разница составляет лишь 4%
  * @skip true
  */
-class XHPTestCaseOddOrEven extends XHPTestClass
+class PPTestCaseOddOrEven extends PPTestClass
 {
     /**
      * @description <b>Остаток деления</b>

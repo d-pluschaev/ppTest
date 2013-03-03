@@ -9,7 +9,7 @@
  * результата
  * @skip true
  */
-class XHPTestCaseFunctionArguments extends XHPTestClass
+class PPTestCaseFunctionArguments extends PPTestClass
 {
     public $veryHugeString;
 

@@ -6,7 +6,7 @@
  *
  * @skip true
  */
-class XHPTestCaseSingleQuotesVsDouble extends XHPTestClass
+class PPTestCaseSingleQuotesVsDouble extends PPTestClass
 {
     /**
      * @description <b>Одинарные кавычки</b> и переменные

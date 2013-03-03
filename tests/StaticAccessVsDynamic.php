@@ -6,7 +6,7 @@
  *
  * @skip true
  */
-class XHPTestCaseStaticAccessVsDynamic extends XHPTestClass
+class PPTestCaseStaticAccessVsDynamic extends PPTestClass
 {
     private $object;
 

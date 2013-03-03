@@ -1,4 +1,4 @@
-xhp_test
+pp_test
 ========
 
 Execution speed test for different PHP constructions.

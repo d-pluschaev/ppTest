@@ -5,7 +5,7 @@
  * Ответ: да, влияет
  * @skip true
  */
-class XHPTestCaseConditions extends XHPTestClass
+class PPTestCaseConditions extends PPTestClass
 {
     /**
      * @description Логика в else
