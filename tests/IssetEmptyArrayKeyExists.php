@@ -2,7 +2,7 @@
 
 /**
  * @description <b>isset</b>, <b>empty</b>, <b>array_key_exists</b> Без комментариев
- * @skipa true
+ * @skip true
  */
 class PPTestCaseIssetEmptyArrayKeyExists extends PPTestClass
 {

@@ -6,8 +6,8 @@
  * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
  */
 
-require_once 'pp_test/bootstrap.php';
-require_once 'pp_test/printers/PPTestTestPrinterPrintTestForCli.php';
+require_once 'ppTest/bootstrap.php';
+require_once 'ppTest/printers/PPTestTestPrinterPrintTestForCli.php';
 
 
 $testCases = glob(__DIR__ . '/tests/*.php');
