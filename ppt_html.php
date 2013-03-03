@@ -6,8 +6,8 @@
  * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
  */
 
-require_once 'xhp_test/bootstrap.php';
-require_once 'xhp_test/printers/PPTestPrinterPrintTestAsHTMLCell.php';
+require_once 'pp_test/bootstrap.php';
+require_once 'pp_test/printers/PPTestPrinterPrintTestAsHTMLCell.php';
 
 header('Content-Type: text/html; charset=UTF-8');
 
