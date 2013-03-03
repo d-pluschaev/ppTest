@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class prints pretty CLI table
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
 class CustomCLITable
 {
     public function getCLITableAsPlainText(array $table, $maxWidth)

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Abstract class for any result printer
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
 abstract class XHPTestResultPrinter
 {
     abstract public function startTest();

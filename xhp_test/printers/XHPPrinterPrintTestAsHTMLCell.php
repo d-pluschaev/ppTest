@@ -1,11 +1,16 @@
 <?php
 
+/**
+ * Class prints HTML test results
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
 class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 {
     public function startCase(XHPTestCase $testCase)
     {
-        echo '<tr/><tr class="title"><td colspan="'.sizeof($testCase->methods).'">'
-            . $testCase->getClassDescription().'</td></tr><tr>';
+        echo '<tr/><tr class="title"><td colspan="' . sizeof($testCase->methods) . '">'
+            . $testCase->getClassDescription() . '</td></tr><tr>';
     }
 
     public function endCase(XHPTestCase $testCase)
@@ -26,15 +31,14 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
     public function testTitle(array $data)
     {
         echo
-            '<div class="title"><span class="meta">Test #' . ($data['index']+1) . ':</span> '
+            '<div class="title"><span class="meta">Test #' . ($data['index'] + 1) . ':</span> '
             . $data['description']
-            //. " <sup class=\"meta\">({$data['external_tests_quantity']} x {$data['internal_tests_quantity']})</sup>"
             . '</div>';
     }
 
     public function testCode($code)
     {
-        echo '<br/>' . $this->highlight($code) . '<br/>';
+        echo $this->highlight($code);
     }
 
     public function testResults(array $data, $handler)
@@ -53,43 +57,39 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
                 break;
         }
 
-        echo '<div class="result">'.(!empty($res) ? "Result: <pre>" . $this->highlight($res) . '</pre><br/>' : '');
+        echo '<div class="result">' . (!empty($res) ? "Result: <pre>" . $this->highlight($res) . '</pre>' : '');
     }
 
     public function testMetrics(array $data)
     {
         $metrics = array(
-            'title'=>$data['description'],
-            'wt' => round($data['wt'],2),
+            'title' => $data['description'],
             'timer' => round($data['timer'] * 1000 * 1000),
-       );
+            'calls' => intval($data['calls']),
+        );
 
-        echo "Average microseconds per call (xhprof): <b>{$metrics['wt']}</b><br/>"
-            . "Average microseconds per test (php): <b>{$metrics['timer']}</b><br/>"
-        ;
-        //. "Average CPU: <b>{$data['cpu']}</b><br/>"
-        //. "Average Mem. usage: <b>{$data['mu']}</b><br/>";
-        //. "Average Memory. usage (peak): <b>{$data['apmu']}</b><br/>";
+        echo "Average microseconds: <b>{$metrics['timer']}</b><br/>"
+            . "Function calls: <b>{$metrics['calls']}</b><br/>";
     }
 
     public function matchResults($matchFlag)
     {
-        switch ($matchFlag){
+        switch ($matchFlag) {
             case 1:
                 $label = "result is the same as previous";
-                $color='green';
+                $color = 'green';
                 break;
             case 0:
                 $label = "first result";
-                $color='#777';
+                $color = '#777';
                 break;
             default:
                 $label = "doesn't match";
-                $color='red';
+                $color = 'red';
                 break;
         }
 
-        echo "<div><sup style=\"color:{$color}\">{$label}</sup></div></div>";
+        //echo "<div><sup style=\"color:{$color}\">{$label}</sup></div></div>";
     }
 
     protected function highlight($txt)
@@ -100,72 +100,88 @@ class XHPPrinterPrintTestAsHTMLCell extends XHPTestResultPrinter
 
     protected function report(array $data)
     {
-        if(!empty($data)){
-            usort($data, function($a,$b){return $a['wt']>$b['wt'];});
+        if (!empty($data)) {
+            // sort
+            usort($data, function ($a, $b) {
+                return $a['timer'] > $b['timer'];
+            });
 
-            $minWt=$minTimer=PHP_INT_MAX;
-            $maxWt=$maxTimer=-PHP_INT_MAX;
-            foreach($data as $row){
-                $minWt = $minWt < $row['wt'] ? $minWt : $row['wt'];
-                $minTimer = $minTimer < $row['timer'] ? $minTimer : $row['timer'];
-                $maxWt = $maxWt > $row['wt'] ? $maxWt : $row['wt'];
-                $maxTimer = $maxTimer > $row['timer'] ? $maxTimer : $row['timer'];
+            // define graph
+            $graphValues = array(
+                'timer' => array(),
+            );
+
+            // calculate minimal values
+            foreach ($graphValues as $gName => &$gData) {
+                $gData['min'] = PHP_INT_MAX;
+                foreach ($data as $row) {
+                    $gData['min'] = $gData['min'] < $row[$gName] ? $gData['min'] : $row[$gName];
+                }
             }
+            unset($gData);
 
             $table = array();
+            $maxGraphWidth = 200;
+            $zoomFactor = 2;
 
-            // graph zoom
-            $offsetWt=($maxWt-$minWt)/$maxWt;
-            $offsetTimer=($maxTimer-$minTimer)/$maxTimer;
-            $maxOffset=$offsetWt> $offsetTimer ? $offsetWt : $offsetTimer;
-            $maxGraphWidth=200;
-            $zoomFactor=1;
-            if($maxOffset > $maxGraphWidth){
-                $zoomFactor=$maxGraphWidth/$maxOffset;
+            foreach ($data as $index => $row) {
+
+                // calculate offsets
+                $maxOffset = -PHP_INT_MAX;
+                foreach ($graphValues as $gName => &$gData) {
+                    $gData['offset'] = round(((($row[$gName] - $gData['min']) / $gData['min']) * 100), 2);
+                    $maxOffset = $maxOffset < $gData['offset'] ? $gData['offset'] : $maxOffset;
+                }
+                unset($gData);
+
+                // calculate zoom factor
+                if (($maxOffset * $zoomFactor) > $maxGraphWidth) {
+                    $zoomFactor = $maxGraphWidth / $maxOffset;
+                }
+
+                // fill the data
+                $data[$index]['timer'] = round($row['timer'] * 1000 * 1000, 2);
+                foreach ($graphValues as $gName => $gData) {
+                    $data[$index]['offset_' . $gName] = $gData['offset'];
+                }
             }
 
-            foreach($data as $row){
-                $wt=round($row['wt'],2);
-                $timer=round($row['timer'] * 1000 * 1000,2);
+            foreach ($data as $index => $row) {
+                $graph = $index
+                    ? '<div class="cmp_graph">'
 
-                $greaterThanMinWt = round(100-(($minWt/$row['wt'])*100),2);
-                $greaterThanMinTimer = round(100-(($minTimer/$row['timer'])*100),2);
+                        . '<div class="wrap"><div class="timer" style="width:'
+                        . round($row['offset_timer'] * $zoomFactor) . 'px"></div></div>'
+                        . '<div class="percentage">' . $row['offset_timer'] . ' %</div>'
 
-                $graph='<div class="cmp_graph" style="width:'.$maxGraphWidth.'px">';
+                        . '</div><div class="dashed_border"></div>'
+                    : '<div class="best_res">The best result</div>';
 
-                $graph.='<div class="wrap"><div class="wt" style="width:'
-                    .round($greaterThanMinWt * $maxGraphWidth/100 * $zoomFactor).'px"></div></div>';
-                $graph.='<div class="wrap"><div class="timer" style="width:'
-                    .round($greaterThanMinTimer * $maxGraphWidth/100 * $zoomFactor).'px"></div></div>';
-                $graph.='</div>';
-
-                $table[]=array(
-                    'Graph'=>$graph,
-                    'XHP Time'=>$wt,
-                    'XHP Time %'=>$greaterThanMinWt,
-                    'PHP Time'=>$timer,
-                    'PHP Time %'=>$greaterThanMinTimer,
-                    'Title'=>$row['description'],
+                $table[] = array(
+                    'Comparing the results' => $graph,
+                    'Title' => ($row['index'] + 1) . ': ' . $row['description'],
+                    'Func. calls' => $row['calls'],
+                    'Microseconds' => $row['timer'],
+                    'Slower on' => $row['offset_timer'],
+                    'Tests performed' => $row['non_xhp_tests_total']
+                        . " ({$row['external_loop_count']} x {$row['test_count']})",
                 );
             }
 
-            echo '<tr><td colspan="42"><div>Report:</div>';
-            echo '<table class="report"><thead>';
-            foreach ($table[0] as $column=>$value){
+            echo '<tr><td colspan="42">';
+            echo '<table class="report" cellpadding="0" cellspacing="0"><thead>';
+            foreach ($table[0] as $column => $value) {
                 echo "<th>$column</th>";
             }
             echo '<thead><tbody>';
 
-
-            foreach ($table as $row){
+            foreach ($table as $row) {
                 echo '<tr>';
-                foreach($row as $value){
+                foreach ($row as $value) {
                     echo "<td>$value</td>";
                 }
                 echo '</tr>';
             }
-            //print_r($table);
-
 
             echo '</tbody></table></td></tr>';
         }

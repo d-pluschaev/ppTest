@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @description Вопрос: Влияет ли вид условных конструкций на скорость<br/>
- * Ответ: НЕТ!
+ * @description Вопрос: Влияет ли вид условных конструкций на скорость?<br/>
+ * Ответ: да, влияет
  * @skip true
  */
 class XHPTestCaseConditions extends XHPTestClass

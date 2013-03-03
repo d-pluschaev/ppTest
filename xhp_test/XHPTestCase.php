@@ -3,26 +3,33 @@
 require_once 'XHPTestResultPrinter.php';
 require_once 'XHPTestClass.php';
 
+/**
+ * Class handles a process of test case execution
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
 class XHPTestCase
 {
-    protected $results;
-
+    public $results;
+    public $testClass;
+    public $testObject;
+    public $testClassRC;
+    public $methods;
+    public $printer;
+    public $xhpEnabled;
     public $data;
 
     public function __construct($testFile, XHPTestResultPrinter $printer)
     {
         if (is_file($testFile)) {
-            if (function_exists('xhprof_enable')) {
-                $this->source = file($testFile);
-                require_once($testFile);
-                $this->testClass = 'XHPTestCase' . ucfirst(pathinfo($testFile, PATHINFO_FILENAME));
-                $this->testObject = new $this->testClass;
-                $this->testClassRC = new ReflectionClass($this->testClass);
-                $this->methods = $this->getTestMethods();
-                $this->printer = $printer;
-            } else {
-                throw new Exception('PHP XHProf extension required');
-            }
+            $this->source = file($testFile);
+            require_once($testFile);
+            $this->testClass = 'XHPTestCase' . ucfirst(pathinfo($testFile, PATHINFO_FILENAME));
+            $this->testObject = new $this->testClass;
+            $this->testClassRC = new ReflectionClass($this->testClass);
+            $this->methods = $this->getTestMethods();
+            $this->printer = $printer;
+            $this->xhpEnabled = function_exists('xhprof_enable');
         } else {
             throw new Exception('Test file not found: ' . $testFile);
         }
@@ -46,25 +53,31 @@ class XHPTestCase
     {
         $this->printer->startCase($this);
 
+        $this->testObject->setUpBeforeClass();
+
         foreach ($this->methods as $index => $test) {
             $this->printer->startTest();
 
             // parse annotations
             $annotations = $this->getMethodAnnotations($test);
-            $internal_tests_quantity = isset($annotations['internal_tests_quantity'])
-                ? $annotations['internal_tests_quantity']
-                : 100;
-            $external_tests_quantity = isset($annotations['external_tests_quantity'])
-                ? $annotations['external_tests_quantity']
-                : 100;
+            $test_count = $this->getTestAnnotation('test_count', $annotations);
+            $external_loop_count = $this->getTestAnnotation('external_loop_count', $annotations);
 
-            // title
-            $primaryData=array(
+            // calculate precision
+            $precision = XHPTestApp::cfg('precision');
+            $external_loop_count = round($external_loop_count * $precision);
+
+            // fill primary data
+            $primaryData = array(
                 'index' => $index,
                 'description' => isset($annotations['description']) ? $annotations['description'] : $test,
-                'internal_tests_quantity' => $internal_tests_quantity,
-                'external_tests_quantity' => $external_tests_quantity,
+                'test_count' => $test_count,
+                'external_loop_count' => $external_loop_count,
+                'precision' => $precision,
+                'non_xhp_tests_total' => $external_loop_count * $test_count,
             );
+
+            // print test title
             $this->printer->testTitle($primaryData);
 
             // code
@@ -75,9 +88,11 @@ class XHPTestCase
             $code = implode('', array_slice($this->source, $start_line, $length));
             $this->printer->testCode($code);
 
-            $data = $this->doTest($external_tests_quantity, $internal_tests_quantity, $test);
+            // perform test
+            $data = $this->doTest($test_count, $external_loop_count, $test);
             $data = array_merge($primaryData, $data);
 
+            // pass results to printer
             $this->printer->testResults(
                 $data,
                 isset($annotations['result_handler'])
@@ -93,56 +108,53 @@ class XHPTestCase
             $this->data[] = $data;
         }
 
+        $this->testObject->tearDownAfterClass();
+
         $this->printer->endCase($this);
     }
 
-    protected function doTest($etq, $itq, $task)
+    protected function doTest($test_count, $external_loop_count, $task)
     {
         $metrics = array(
-            'wt' => array(),
-            'cpu' => array(),
-            'mu' => array(),
-            'pmu' => array(),
             'timer' => array(),
         );
 
         $this->testObject->setUp();
 
-        for ($j = 0; $j < $etq; $j++) {
+        // run test
+        for ($j = 0; $j < $external_loop_count; $j++) {
             $timer = microtime(1);
-
-            xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
-
-            for ($i = 0; $i < $itq; $i++) {
+            for ($i = 0; $i < $test_count; $i++) {
                 $result = call_user_func_array(array($this->testObject, $task), array());
-                usleep(100);
             }
-
-            $xhp = xhprof_disable();
-            $xdata = $xhp["call_user_func_array==>{$this->testClass}::$task"];
-
-            $metrics['wt'][] = $xdata['wt'] / $itq;
-            $metrics['cpu'][] = $xdata['cpu'] / $itq;
-            $metrics['mu'][] = $xdata['mu'] / $itq;
-            $metrics['pmu'][] = $xdata['pmu'] / $itq;
-            $metrics['timer'][] = microtime(1) - $timer;
-
-            usleep(10);
+            $timer2 = microtime(1);
+            $metrics['timer'][] = $timer2 - $timer;
         }
 
+        // calculate averages
         foreach ($metrics as &$metric) {
             if (sizeof($metric) > 3) {
                 // sort
                 sort($metric);
                 // remove top 20%
-                $metric = array_slice($metric, 0, -round($etq / 20));
+                $metric = array_slice($metric, 0, -round(sizeof($metric) / 20));
                 // remove bottom 20%
-                $metric = array_slice($metric, round($etq / 20));
+                $metric = array_slice($metric, round(sizeof($metric) / 20));
                 // calc averages
                 $metric = array_sum($metric) / sizeof($metric);
             } else {
                 $metric = array_sum($metric) / sizeof($metric);
             }
+        }
+        unset($metric);
+
+        $metrics['calls'] = 'n/a';
+        // collect XHP data
+        if ($this->xhpEnabled) {
+            xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+            call_user_func_array(array($this->testObject, $task), array());
+            $xhp = xhprof_disable();
+            $metrics['calls'] = $this->xhpCollectFunctionCalls($xhp, $task);
         }
 
         $metrics['result'] = $result;
@@ -150,6 +162,30 @@ class XHPTestCase
         $this->testObject->tearDown();
 
         return $metrics;
+    }
+
+    protected function getTestAnnotation($key, array $annotations)
+    {
+        return isset($annotations[$key])
+            ? $annotations[$key]
+            : XHPTestApp::cfg('default_annotations', $key);
+    }
+
+    protected function xhpCollectFunctionCalls(array $xhpDump, $task)
+    {
+        $ownCalls = array(
+            'main()' => 1,
+            'main()==>xhprof_disable' => 1,
+            'main()==>call_user_func_array' => 1,
+            "call_user_func_array==>{$this->testClass}::$task" => 1,
+        );
+        $calls = 0;
+        foreach ($xhpDump as $call => $data) {
+            if (!isset($ownCalls[$call])) {
+                $calls += $data['ct'];
+            }
+        }
+        return $calls;
     }
 
     protected function getMethodAnnotations($method)

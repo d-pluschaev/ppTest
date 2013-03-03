@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @description echo vs print
+ * @description <b>echo</b> vs <b>print</b>: есть сомнение, говорят что print() тупит, врут?<br/>
+ * Ответ: врут
  * @skip true
  */
 class XHPTestCaseEchoVsPrint extends XHPTestClass

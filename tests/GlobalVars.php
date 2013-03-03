@@ -3,9 +3,9 @@
 /**
  * @description доступ к различным видам переменных<br/>
  * Вывод:<br/>
- * 1. Получение значения глобальной переменной через массив $GLOBALS в 2 раза медленнее,
+ * 1. Получение значения глобальной переменной через массив $GLOBALS почти в 2 раза медленнее,
  * чем предварительное подключение переменной в конcтрукции <b>global</b><br/>
- * 2. Получение значения свойства объекта почти в 4 раза медленнее получение значения локальной переменной
+ * 2. Получение значения свойства объекта почти в 3 раза медленнее получение значения локальной переменной
  *
  * @skip true
  */
@@ -20,11 +20,12 @@ class XHPTestCaseGlobalVars extends XHPTestClass
 
     /**
      * @description Глобальная переменная через <b>$GLOBALS</b>
-     * @internal_tests_quantity 1
+     * @test_count 100
+     * @external_loop_count 10
      */
     public function testGetGlobalVar()
     {
-        for($i=0;$i<100000;$i++){
+        for ($i = 0; $i < 10000; $i++) {
             $x = $GLOBALS['var'];
         }
         return $x;
@@ -32,12 +33,13 @@ class XHPTestCaseGlobalVars extends XHPTestClass
 
     /**
      * @description Глобальная переменная через <b>global</b>
-     * @internal_tests_quantity 1
+     * @test_count 100
+     * @external_loop_count 10
      */
     public function testGetGlobalVar2()
     {
         global $var;
-        for($i=0;$i<100000;$i++){
+        for ($i = 0; $i < 10000; $i++) {
             $x = $var;
         }
         return $x;
@@ -45,11 +47,12 @@ class XHPTestCaseGlobalVars extends XHPTestClass
 
     /**
      * @description <b>свойство объекта</b>
-     * @internal_tests_quantity 1
+     * @test_count 100
+     * @external_loop_count 10
      */
     public function testGetObjectProperty()
     {
-        for($i=0;$i<100000;$i++){
+        for ($i = 0; $i < 10000; $i++) {
             $x = $this->var;
         }
         return $x;
@@ -57,12 +60,13 @@ class XHPTestCaseGlobalVars extends XHPTestClass
 
     /**
      * @description <b>локальная переменная</b>
-     * @internal_tests_quantity 1
+     * @test_count 100
+     * @external_loop_count 10
      */
     public function testGetLocalVar()
     {
         $var = 'test';
-        for($i=0;$i<100000;$i++){
+        for ($i = 0; $i < 10000; $i++) {
             $x = $var;
         }
         return $x;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @description <b>isset</b>, <b>empty</b>, <b>array_key_exists</b>
+ * @description <b>isset</b>, <b>empty</b>, <b>array_key_exists</b> Без комментариев
  * @skip true
  */
 class XHPTestCaseIssetEmptyArrayKeyExists extends XHPTestClass

@@ -1,14 +1,16 @@
 <?php
 
 /**
- * @description <b>static</b> and <b>dynamic</b> access to class methods and properties
+ * @description Доступ к <b>статическим</b> и <b>динамическим</b> свойствам и методам</br>
+ * Никаких различий в скорости нет.
+ *
  * @skip true
  */
 class XHPTestCaseStaticAccessVsDynamic extends XHPTestClass
 {
     private $object;
 
-    public function __construct()
+    public function setUpBeforeClass()
     {
         $this->object = new StaticAccessVsDynamicTestClass();
     }

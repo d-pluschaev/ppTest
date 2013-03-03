@@ -2,13 +2,18 @@
 
 require_once 'CustomCLITable.php';
 
+/**
+ * Class prints CLI test results
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
 class XHPPrinterPrintTestForCli extends XHPTestResultPrinter
 {
     public function startCase(XHPTestCase $testCase)
     {
-        echo str_repeat('_',60) . "\n";
+        echo str_repeat('_', XHPTestApp::cfg('cli', 'max_console_width')) . "\n";
         echo strip_tags($testCase->getClassDescription()) . "\n";
-        echo str_repeat('_',60) . "\n";
+        echo str_repeat('_', XHPTestApp::cfg('cli', 'max_console_width')) . "\n";
     }
 
     public function endCase(XHPTestCase $testCase)
@@ -23,12 +28,12 @@ class XHPPrinterPrintTestForCli extends XHPTestResultPrinter
 
     public function endTest()
     {
-        echo str_repeat('_', 60) . "\n";
+        echo str_repeat('_', XHPTestApp::cfg('cli', 'max_console_width')) . "\n";
     }
 
     public function testTitle(array $data)
     {
-        echo 'Test #' . ($data['index']+1) . ': ' . strip_tags($data['description']) . "\n";
+        echo 'Test #' . ($data['index'] + 1) . ': ' . strip_tags($data['description']) . "\n";
     }
 
     public function testCode($code)
@@ -58,8 +63,8 @@ class XHPPrinterPrintTestForCli extends XHPTestResultPrinter
     public function testMetrics(array $data)
     {
         $metrics = array(
-            'title'=>$data['description'],
-            'wt' => round($data['wt'],2),
+            'title' => $data['description'],
+            'wt' => round($data['wt'], 2),
             'timer' => round($data['timer'] * 1000 * 1000),
         );
         echo "Average microseconds per call (xhprof): {$metrics['wt']}\n"
@@ -68,7 +73,7 @@ class XHPPrinterPrintTestForCli extends XHPTestResultPrinter
 
     public function matchResults($matchFlag)
     {
-        switch ($matchFlag){
+        switch ($matchFlag) {
             case 1:
                 $label = "result is the same as previous";
                 break;
@@ -85,53 +90,55 @@ class XHPPrinterPrintTestForCli extends XHPTestResultPrinter
 
     protected function report(array $data)
     {
-        usort($data, function($a,$b){return $a['wt']>$b['wt'];});
+        usort($data, function ($a, $b) {
+            return $a['wt'] > $b['wt'];
+        });
 
-        $minWt=$minTimer=PHP_INT_MAX;
-        foreach($data as $row){
+        $minWt = $minTimer = PHP_INT_MAX;
+        foreach ($data as $row) {
             $minWt = $minWt < $row['wt'] ? $minWt : $row['wt'];
             $minTimer = $minTimer < $row['timer'] ? $minTimer : $row['timer'];
         }
 
         $table = array(
-            'XHP Time'=>array(
-                'width'=>0,
-                'cells'=>array(),
+            'XHP Time' => array(
+                'width' => 0,
+                'cells' => array(),
             ),
-            'XHP Time %'=>array(
-                'width'=>0,
-                'cells'=>array(),
+            'XHP Time %' => array(
+                'width' => 0,
+                'cells' => array(),
             ),
-            'PHP Time'=>array(
-                'width'=>0,
-                'cells'=>array(),
+            'PHP Time' => array(
+                'width' => 0,
+                'cells' => array(),
             ),
-            'PHP Time %'=>array(
-                'width'=>0,
-                'cells'=>array(),
+            'PHP Time %' => array(
+                'width' => 0,
+                'cells' => array(),
             ),
-            'Title'=>array(
-                'cells'=>array(),
-                'wrap'=>true,
+            'Title' => array(
+                'cells' => array(),
+                'wrap' => true,
             ),
         );
 
-        foreach($data as $row){
-            $wt=round($row['wt'],2);
-            $timer=round($row['timer'] * 1000 * 1000,2);
+        foreach ($data as $row) {
+            $wt = round($row['wt'], 2);
+            $timer = round($row['timer'] * 1000 * 1000, 2);
 
-            $greaterThanMinWt = round(100-(($minWt/$row['wt'])*100),2);
-            $greaterThanMinTimer = round(100-(($minTimer/$row['timer'])*100),2);
+            $greaterThanMinWt = round(100 - (($minWt / $row['wt']) * 100), 2);
+            $greaterThanMinTimer = round(100 - (($minTimer / $row['timer']) * 100), 2);
 
-            $table['XHP Time']['cells'][]=$wt;
-            $table['XHP Time %']['cells'][]=$greaterThanMinWt;
-            $table['PHP Time']['cells'][]=$timer;
-            $table['PHP Time %']['cells'][]=$greaterThanMinTimer;
-            $table['Title']['cells'][]=strip_tags($row['description']);
+            $table['XHP Time']['cells'][] = $wt;
+            $table['XHP Time %']['cells'][] = $greaterThanMinWt;
+            $table['PHP Time']['cells'][] = $timer;
+            $table['PHP Time %']['cells'][] = $greaterThanMinTimer;
+            $table['Title']['cells'][] = strip_tags($row['description']);
         }
 
         $cliTable = new CustomCLITable();
-        $plainText = $cliTable->getCLITableAsPlainText($table, XHPTestApp::cfg('cli','max_console_width'));
+        $plainText = $cliTable->getCLITableAsPlainText($table, XHPTestApp::cfg('cli', 'max_console_width'));
 
         echo "$plainText\n";
     }

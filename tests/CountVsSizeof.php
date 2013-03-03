@@ -9,7 +9,7 @@ class XHPTestCaseCountVsSizeof extends XHPTestClass
 {
     private $array;
 
-    public function __construct()
+    public function setUpBeforeClass()
     {
         $sample = array_keys(array_fill(0, 10000, 0));
         $this->array = array_combine($sample, $sample);
@@ -21,7 +21,7 @@ class XHPTestCaseCountVsSizeof extends XHPTestClass
      */
     public function testCount()
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $x = count($this->array);
         }
         return $x;
@@ -33,7 +33,7 @@ class XHPTestCaseCountVsSizeof extends XHPTestClass
      */
     public function testSizeof()
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $x = sizeof($this->array);
         }
         return $x;

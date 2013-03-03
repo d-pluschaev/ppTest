@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Entry point for HTML test runner
+ *
+ * @author Dmitri Pluschaev dmitri.pluschaev@gmail.com
+ */
+
 require_once 'xhp_test/bootstrap.php';
 require_once 'xhp_test/printers/XHPPrinterPrintTestAsHTMLCell.php';
 
@@ -11,17 +17,18 @@ header('Content-Type: text/html; charset=UTF-8');
 <html itemscope="itemscope" itemtype="http://schema.org/WebPage">
 <head>
     <title></title>
-    <link rel="stylesheet" type="text/css" href="xt_html.css" />
+    <link rel="stylesheet" type="text/css" href="xt_html.css"/>
 </head>
 <body>
 
-<table class="main"><tr>
+<table class="main" cellspacing="0" cellpadding="0">
+<tr>
 
-<?
+    <?
 
-    $testCases = glob(__DIR__.'/tests/*.php');
+    $testCases = glob(__DIR__ . '/tests/*.php');
 
-    foreach($testCases as $testCaseFile){
+    foreach ($testCases as $testCaseFile) {
 
         $testCase = new XHPTestCase($testCaseFile, new XHPPrinterPrintTestAsHTMLCell());
 
@@ -32,9 +39,9 @@ header('Content-Type: text/html; charset=UTF-8');
 
         </tr>
 
-    <?}?>
+    <? }?>
 
-</tr></table>
+    </tr></table>
 
 </body>
 </html>
