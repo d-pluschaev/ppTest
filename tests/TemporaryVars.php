@@ -5,7 +5,7 @@
  * Ответ: ничем
  * @skip true
  */
-class XHPTestCaseTemporaryVars extends XHPTestClass
+class PPTestCaseTemporaryVars extends PPTestClass
 {
     /**
      * @description Используем промежуточную переменную, например, для удобочитаемости

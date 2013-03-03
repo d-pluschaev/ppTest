@@ -6,7 +6,7 @@
  * Ключом для хэша будет служить столбец "ID";
  * @skip true
  */
-class XHPTestCaseForeachVsFor extends XHPTestClass
+class PPTestCaseForeachVsFor extends PPTestClass
 {
     private $data;
 

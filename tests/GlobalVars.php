@@ -9,7 +9,7 @@
  *
  * @skip true
  */
-class XHPTestCaseGlobalVars extends XHPTestClass
+class PPTestCaseGlobalVars extends PPTestClass
 {
     protected $var = 'test';
 

@@ -5,7 +5,7 @@
  * Ответ: врут
  * @skip true
  */
-class XHPTestCaseEchoVsPrint extends XHPTestClass
+class PPTestCaseEchoVsPrint extends PPTestClass
 {
     /**
      * @description <b>echo</b>

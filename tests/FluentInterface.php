@@ -5,7 +5,7 @@
  * Ответ: НЕТ!
  * @skip true
  */
-class XHPTestCaseFluentInterface extends XHPTestClass
+class PPTestCaseFluentInterface extends PPTestClass
 {
     private $obj;
 

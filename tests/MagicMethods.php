@@ -6,7 +6,7 @@
  * Для get на 30%, для set на 40%, для call на 60%.
  * @skip true
  */
-class XHPTestCaseMagicMethods extends XHPTestClass
+class PPTestCaseMagicMethods extends PPTestClass
 {
     public $testClass;
 

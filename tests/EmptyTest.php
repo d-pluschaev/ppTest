@@ -3,7 +3,7 @@
 /**
  * @description Тестовый тест для срочных тестов
  */
-class XHPTestCaseEmptyTest extends XHPTestClass
+class PPTestCaseEmptyTest extends PPTestClass
 {
     /**
      * @description Какой-то тест 1

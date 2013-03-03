@@ -7,7 +7,7 @@
  * засчёт прокси-функции в PHP extension. Чтобы получить задержку в 1 секунду из-за XHProf, необходимо 571479 вызовов
  * @skip true
  */
-class XHPTestCaseXHProfImpact extends XHPTestClass
+class PPTestCaseXHProfImpact extends PPTestClass
 {
     private $results = array();
 

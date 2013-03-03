@@ -5,7 +5,7 @@
  * Результат теста: они идентичны по времени выполнения
  * @skip true
  */
-class XHPTestCaseCountVsSizeof extends XHPTestClass
+class PPTestCaseCountVsSizeof extends PPTestClass
 {
     private $array;
 
