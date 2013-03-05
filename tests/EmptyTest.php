@@ -2,6 +2,7 @@
 
 /**
  * @description Тестовый тест для срочных тестов
+ * @skip true
  */
 class PPTestCaseEmptyTest extends PPTestClass
 {

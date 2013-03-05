@@ -21,7 +21,7 @@ class PPTestCaseConditions extends PPTestClass
     }
 
     /**
-     * @description Логика в true
+     * @description Логика в if
      */
     public function testIfCondition2()
     {
